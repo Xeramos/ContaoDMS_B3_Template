@@ -1,0 +1,165 @@
+<!-- indexer::stop -->
+<div class="mod_dms <?php echo $this->class; ?>"<?php echo $this->cssID; ?><?php if ($this->style): ?> style="<?php echo $this->style; ?>"<?php endif; ?>>
+<?php if ($this->headline): ?>
+
+<<?php echo $this->hl; ?>><?php echo $this->headline; ?></<?php echo $this->hl; ?>>
+<?php endif; ?>
+
+<form class="form-horizontal" action="<?php echo $this->action; ?>" method="POST" enctype="multipart/form-data" id="management" name="management">
+	<input type="hidden" name="FORM_SUBMIT" value="<?php echo $this->formId; ?>">
+	<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}">
+
+   <?php if (count($this->messages['errors']) > 0): ?>
+	<!-- Errors -->
+	<div id="dms_errors" class="alert alert-danger" role="alert">
+		<?php foreach ($this->messages['errors'] as $error): ?>
+		<div class="error"><?php echo $error; ?></div>
+		<?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+
+	<?php if (count($this->messages['warnings']) > 0): ?>
+	<!-- Warnings -->
+	<div id="dms_warnings" class="alert alert-warning" role="alert">
+		<?php foreach ($this->messages['warnings'] as $warning): ?>
+		<div class="warning"><?php echo $warning; ?></div>
+		<?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+
+	<?php if (count($this->messages['successes']) > 0): ?>
+	<!-- Successes -->
+	<div id="dms_successes" class="alert alert-success" role="alert">
+		<?php foreach ($this->messages['successes'] as $success): ?>
+		<div class="success"><?php echo $success; ?></div>
+		<?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+
+	<?php if (count($this->messages['infos']) > 0): ?>
+	<!-- Infos -->
+	<div id="dms_infos" class="alert alert-info" role="alert">
+		<?php foreach ($this->messages['infos'] as $info): ?>
+		<div class="info"><?php echo $info; ?></div>
+		<?php endforeach; ?>
+	</div>
+	<?php endif; ?>
+
+   <div class="panel panel-primary">
+      <div class="panel-heading "><?php echo sprintf($GLOBALS['TL_LANG']['DMS']['management_headline'], $GLOBALS['TL_LANG']['DMS']['management_upload_headline'], $GLOBALS['TL_LANG']['DMS']['management_upload_processed_headline']); ?></div>
+      <div class="panel-body">
+         <div class="well well-sm"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_file_headline']; ?></div>
+
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_category']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static">
+   					<?php $arrPathNames = $this->category->getPathNames(true); ?>
+   					<?php if (count($arrPathNames) > 0): ?>
+   						<?php echo implode($GLOBALS['TL_LANG']['DMS']['management_path_separator'], $arrPathNames); ?>
+   					<?php endif; ?>
+						<i class="fa fa-angle-double-right" aria-hidden="true"></i> <?php echo $this->category->name; ?>
+               </p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_file_name']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->fileName; ?></p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_file_type']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->fileType; ?></p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_file_size']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->fileSizeMbFormatted; ?></p>
+            </div>
+         </div>
+         <?php if (count($this->existingDocuments) > 0) : ?>
+            <div class="well well-sm"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_headline']; ?></div>
+            <?php foreach ($this->existingDocuments as $document) : ?>
+               <div class="form-group">
+                  <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_name']; ?></label>
+                  <div class="col-sm-10">
+                     <p class="form-control-static">
+      					<?php
+      						$title = sprintf($GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_size'], $document->getFileSize(Document::FILE_SIZE_UNIT_MB, true));
+      						if (strlen($document->getUploadDate() > 0) && $document->hasUploadMemberName())
+      						{
+      							$title .= "\n" . sprintf($GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_uploaded'], $document->getUploadDate(), $document->uploadMemberName);
+      						}
+      						if (strlen($document->getLasteditDate() > 0) && $document->hasLasteditMemberName())
+      						{
+      							$title .= "\n" . sprintf($GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_lastedited'], $document->getLasteditDate(), $document->lasteditMemberName);
+      						}
+      						$arrPathNames = $document->category->getPathNames(true);
+      						$categoryPath = "";
+      						if (count($arrPathNames) > 0)
+      						{
+      							$categoryPath = "(" . implode($GLOBALS['TL_LANG']['DMS']['management_path_separator'], $arrPathNames) . ")";
+      						}
+      						$title .= "\n" . sprintf($GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_category'], $document->category->name, $categoryPath);
+      					?>
+      					<span class="existingDocument <?php if ($document->isPublished()) : ?>published<?php else: ?>unpublished<?php endif; ?>">
+      						<?php echo $document->name; ?> <?php echo sprintf($GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_version'], $document->getVersion()); ?>
+      						- <?php if ($document->isPublished()) : ?><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_published']; ?><?php else: ?><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_existing_unpublished']; ?><?php endif; ?>
+      						<span class="explanation" title="<?php echo $title; ?>"><?php echo $GLOBALS['TL_LANG']['DMS']['management_explanation']; ?></span>
+      					</span>
+                     </p>
+                  </div>
+               </div>
+      		<?php endforeach; ?>
+      	<?php endif; ?>
+         <div class="well well-sm"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_document_headline']; ?></div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_document_name']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->document->name; ?></p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_document_description']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->document->description; ?></p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_document_keywords']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->document->keywords; ?></p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_document_version']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static"><?php echo $this->document->getVersion(); ?></p>
+            </div>
+         </div>
+         <div class="form-group">
+            <label class="col-sm-2 control-label"><?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_properties_document_publish']; ?></label>
+            <div class="col-sm-10">
+               <p class="form-control-static">
+                  <?php if ($this->document->isPublished()) : ?>
+      					<?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_processed_published']; ?>
+      				<?php else : ?>
+      					<?php echo $GLOBALS['TL_LANG']['DMS']['management_upload_processed_unpublished']; ?>
+      				<?php endif; ?>
+               </p>
+            </div>
+         </div>
+         <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+               <button class="btn btn-primary" type="submit" name="abort" value="true" title="<?php echo $GLOBALS['TL_LANG']['DMS']['management_button_back']; ?>"><i class="fa fa-undo" aria-hidden="true"></i> <?php echo $GLOBALS['TL_LANG']['DMS']['management_button_back']; ?></button>
+					<button class="btn btn-success" type="submit" name="uploadCategory" value="<?php echo $this->category->id; ?>" title="<?php echo $GLOBALS['TL_LANG']['DMS']['management_button_upload_another']; ?>"><i class="fa fa-chevron-right" aria-hidden="true"></i> <?php echo $GLOBALS['TL_LANG']['DMS']['management_button_upload_another']; ?></button>
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+
+</div>

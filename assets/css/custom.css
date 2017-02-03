@@ -1,0 +1,56 @@
+/*Contao DMS CSS*/
+
+.level_1 > .category_name > i{
+   padding-left:20px;
+}
+.level_2 > .category_name > i{
+   padding-left:40px;
+}
+.level_3 > .category_name > i{
+   padding-left:60px;
+}
+
+.level_1 > .document_link > a{
+   padding-left:20px;
+}
+.level_2 > .document_link > a{
+   padding-left:40px;
+}
+.level_3 > .document_link > a{
+   padding-left:60px;
+}
+.level_4 > .document_link > a{
+   padding-left:80px;
+}
+
+input[id*='ch_']{
+   position: absolute;
+   appearance: none;
+   cursor: pointer;
+   left: -100%;
+   top: -100%;
+}
+
+input[id*='ch_'] + label {
+   width: 25px;
+   border-radius: 4px;
+   color: #aaa;
+   font-size: 14px;
+   text-align: center;
+   -webkit-font-smoothing: antialiased;
+   cursor: pointer;
+   transition: all 500ms ease;
+}
+
+input[id*='ch_'] + label:after {
+   content: "\f067";
+   font-family: FontAwesome;
+}
+input[id*='ch_']:checked + label:after {
+   content: "\f068";
+   font-family: FontAwesome;
+}
+
+input[id*='ch_'] + label:hover{
+   color:#000;
+}
